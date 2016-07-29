@@ -1,0 +1,4 @@
+- src: cmprescott.chrome
+  version: 0.2.2
+- src: mglaman.atom
+  version: 1.0.0
