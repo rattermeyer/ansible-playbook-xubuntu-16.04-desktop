@@ -1,0 +1,51 @@
+---
+# defaults file for git
+home: "/home/{{git.user.account}}"
+git_bash_prompt_version: "2.5.1"
+git_bash_prompt_theme: Solarized
+packages_nonx11:
+  - git
+  - tig
+  - bash-completion
+  - vim
+packages_x11:
+  - gitk
+  - meld
+gui_enabled: true
+git_default:
+  core:
+    editor: vim
+    autocrlf: input
+  merge:
+    tool: meld
+  credential:
+    helper: "cache --timeout=1800"
+  color:
+    ui: auto
+    branch: auto
+    diff: auto
+    status: auto
+  color_branch:
+    current: red reverse
+    local: blue
+    remote: green
+  color_diff:
+    meta: yellow
+    frag: magenta
+    old: red bold
+    new: green
+    plain: white
+  color_status:
+    added: yellow
+    changed: green
+    untracked: cyan
+  rerere:
+    enabled: false
+  rebase:
+    autosquash: true
+  filter_lfs:
+    clean: "git-lfs clean %f"
+    smudge: "git-lfs smudge %f"
+    required: true
+  push:
+    default: simple

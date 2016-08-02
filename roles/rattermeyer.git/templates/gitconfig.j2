@@ -1,0 +1,181 @@
+[user]
+	name = {{git_result.user.name | mandatory}}
+	email = {{git_result.user.email | mandatory}}
+[core]
+	editor = {{git_result.core.editor}}
+	autocrlf = {{git_result.core.autocrlf}} ;
+
+[merge]
+	tool = {{git_result.merge.tool}}
+[credential]
+  helper = {{git_result.credential.helper}}
+
+[color]
+	ui = {{git_result.color.ui}}
+  branch = {{git_result.color.branch}}
+  diff = {{git_result.color.diff}}
+  status = {{git_result.color.status}}
+
+[color "branch"]
+  current = {{git_result.color_branch.current}}
+  local = {{git_result.color_branch.local}}
+  remote = {{git_result.color_branch.remote}}
+
+[color "diff"]
+  meta = {{git_result.color_diff.meta}}
+  frag = {{git_result.color_diff.frag}}
+  old = {{git_result.color_diff.old}}
+  new = {{git_result.color_diff.new}}
+  plain = {{git_result.color_diff.plain}}
+
+[color "status"]
+  added = {{git_result.color_status.added}}
+  changed = {{git_result.color_status.changed}}
+  untracked = {{git_result.color_status.untracked}}
+
+[rerere]
+  enabled = {{git_result.rerere.enabled}}
+[rebase]
+  autosquash = {{git_result.rebase.autosquash}}
+[filter "lfs"]
+	clean = {{git_result.filter_lfs.clean}}
+	smudge = {{git_result.filter_lfs.smudge}}
+  required = {{git_result.filter_lfs.required}}
+[push]
+	default = {{git_result.push.default}}
+[alias]
+    # basic
+    st = status -s
+    cl = clone
+    ci = commit
+    co = checkout
+    br = branch
+    r = reset
+    cp = cherry-pick
+    gr = grep -Ii
+    # end: basic
+
+    # tweak defaults
+    diff = diff --word-diff
+    branch = branch -ra
+    grep = grep -Ii
+    bra = branch -ra
+    ai = add --interactive
+
+    # grep on filename
+    f = "!git ls-files | grep -i"
+    # end: grep
+    # commit
+    cm = commit -m
+    cma = commit -a -m
+    ca = commit --amend
+    amend = commit --amend
+    caa = commit -a --amend -C HEAD
+    # emd_ commit
+    # log commands
+    # log short
+    ls = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+    # log long
+    ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+    # log graph
+		lg = !"git lg1"
+		lg1 = !"git lg1-specific --all"
+		lg2 = !"git lg2-specific --all"
+		lg3 = !"git lg3-specific --all"
+
+		lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ai)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+		lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold green)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+		lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %ci)%C(reset) %C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+		## log changed
+		lc  = "!f() { git ll "$1"^.."$1"; }; f"
+    lnc = log --pretty=format:"%h\\ %s\\ [%cn]"
+		filelog = log -u
+    fl = log -u
+    # end: log
+    # diff
+    d = diff --word-diff
+    dc = diff --cached
+
+		## commits to be pushed
+		ctbp = "!f() { curr_branch=`git branch | grep \"*\" | awk '{print $2}'` && git log origin/$curr_branch..$curr_branch ; }; f"
+
+    # diff last commit
+    dlc = diff --cached HEAD^
+    dr  = "!f() { git diff -w "$1"^.."$1"; }; f"
+    diffr  = "!f() { git diff "$1"^.."$1"; }; f"
+    # end: diff
+    # reset commands
+    r1 = reset HEAD^
+    r2 = reset HEAD^^
+    rh = reset --hard
+    rh1 = reset HEAD^ --hard
+    rh2 = reset HEAD^^ --hard
+    # end: reset
+
+    # stash
+    sl = stash list
+    sa = stash apply
+    ss = stash save
+    # end: stash
+
+    # subtree
+    #   add
+    sba = "!f() { git subtree add --prefix $2 $1 master --squash; }; f"
+    #   update/pull
+    sbu = "!f() { git subtree pull --prefix $2 $1 master --squash; }; f"
+    # end: subree
+
+    # various useful
+    # last tag created
+    lasttag = describe --tags --abbrev=0
+    lt = describe --tags --abbrev=0
+
+    # conflict/merges
+    ours = "!f() { git co --ours $@ && git add $@; }; f"
+    theirs = "!f() { git co --theirs $@ && git add $@; }; f"
+
+    #list remotes
+    rem="!git config -l | grep remote.*url | tail -n +2"
+
+    #apply patch from other local repo
+    lap = "!f() { git --git-dir=$1 format-patch -k -1 --stdout $2 | git am -3 -k; }; f"
+
+    #open markdown files edited in last commit
+    last = "!vim $(git show HEAD --format="" --name-only | grep -e .*md$ | xargs)"
+    #open just created markdown in working directory
+    newmd = "!vim $(git status -s | awk {'print $2'})"
+
+    # initial empty commit
+    empty = "!git commit -am\"[empty] Initial commit\" --allow-empty"
+		bootstrap = "!f() { git init && git empty; }; f"
+    # list all aliases
+    la = "!git config -l | grep alias | cut -c 7-"
+    # end: list aliases
+
+    # misc
+    # grep from root folder
+    gra = "!f() { A=$(pwd) && TOPLEVEL=$(git rev-parse --show-toplevel) && cd $TOPLEVEL && git grep --full-name -In $1 | xargs -I{} echo $TOPLEVEL/{} && cd $A; }; f"
+    # end: misc
+    # worktree list
+    wl = worktree list
+    # end: worktree list
+
+		# upstream handling
+		## pull upstream
+		pu = "!f() { git fetch upstream ; git merge upstream/master ; }; f"
+		upstream = remote add upstream
+		# clone upstream origin upstream
+		clu = "!f() { git clone $1 ; cd `basename $1 .git` ; git upstream $2 ; git fetch upstream ; } ; f"
+		# end upstream handling
+
+    # Given a merge commit, find the span of commits that exist(ed) on that
+    # branch. Again, not so useful in itself, but used by other aliases.
+    merge-span = "!f() { echo $(git log -1 $2 --merges --pretty=format:%P | cut -d' ' -f1)$1$(git log -1 $2 --merges --pretty=format:%P | cut -d' ' -f2); }; f"
+
+    # Find the commits that were introduced by a merge
+    merge-log = "!git log `git merge-span .. $1`"
+    # Show the changes that were introduced by a merge
+    merge-diff = "!git diff `git merge-span ... $1`"
+    # As above, but in your difftool
+    merge-difftool = "!git difftool `git merge-span ... $1`"
+    #

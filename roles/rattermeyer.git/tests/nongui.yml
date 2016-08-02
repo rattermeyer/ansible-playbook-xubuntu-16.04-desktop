@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - role: ansible-role-git
+      git:
+        user:
+          name: Richard Attermeyer
+          email: richard.attermeyer@gmail.com
+          account: richard
+      gui_enabled: false

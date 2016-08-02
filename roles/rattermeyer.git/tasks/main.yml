@@ -1,0 +1,62 @@
+---
+# tasks file for git
+- name: set merge tool
+  set_fact:
+    git_m:
+      merge:
+        tool: meld
+  when: gui_enabled is defined and gui_enabled == True
+
+- name: set merge tool
+  set_fact:
+    git_m:
+      merge:
+        tool: vimdiff
+  when: gui_enabled is undefined or gui_enabled == False
+
+- name: combine provided and default git settings
+  set_fact:
+    git_result: "{{git_default | combine( git, git_m, recursive=True ) }}"
+
+- name: Check that mandatory variables are defined
+  assert:
+    that:
+      - git is defined
+      - git.user.account is defined
+
+- name: Install packages (non x11)
+  apt: name="{{item}}"
+  with_items: "{{packages_nonx11}}"
+
+- name: Install packages (x11)
+  apt: name="{{item}}"
+  with_items: "{{packages_x11}}"
+  when: gui_enabled is defined and gui_enabled == True
+
+- name: register installed git version
+  shell: "dpkg -s git | grep Version | awk '{print $2}' | cut -d: -f2 | cut -d- -f1"
+  register: git_version
+  changed_when: False
+
+- name: Install git bash completion
+  get_url:
+    dest: /etc/bash_completion.d/git-completion
+    url: "https://raw.githubusercontent.com/git/git/v{{git_version.stdout}}/contrib/completion/git-completion.bash"
+
+- block:
+    - name: install git prompt
+      git: repo=https://github.com/magicmonty/bash-git-prompt.git dest={{home}}/.bash-git-prompt version="{{git_bash_prompt_version}}"
+    - name: Enable git prompt only in repositories
+      lineinfile: dest={{home}}/.bashrc line='GIT_PROMPT_ONLY_IN_REPO=1' insertafter=EOF
+    - name: Enable Solarized Theme
+      lineinfile: dest={{home}}/.bashrc line='GIT_PROMPT_THEME="{{git_bash_prompt_theme}}"' insertafter=EOF
+    - name: Source git bash prompt
+      lineinfile: dest={{home}}/.bashrc line='source ~/.bash-git-prompt/gitprompt.sh' insertafter=EOF
+    - name: Git configuration (template)
+      template: src=gitconfig.j2 dest="{{home}}/.gitconfig" owner="{{git.user.account}}" group="{{git.user.account}}" mode=0664
+      when: config is not defined
+    - name: Git Config (custom)
+      copy: src="{{config}}" dest="{{home}}/.gitconfig" owner="{{git.user.account}}" group="{{git.user.account}}" mode=0664
+      when: config is defined
+  become: true
+  become_user: "{{git.user.account}}"

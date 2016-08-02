@@ -1,0 +1,12 @@
+[user]
+	name = Max Mustermann
+	email = noname@gmail.com
+[core]
+	editor = emacs
+	autocrlf = input ;
+
+[merge]
+	tool = meld
+[credential]
+  helper = cache --timeout=1800
+
