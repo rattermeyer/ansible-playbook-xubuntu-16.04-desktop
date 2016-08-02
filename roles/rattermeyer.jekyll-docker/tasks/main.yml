@@ -1,0 +1,35 @@
+---
+# tasks file for jekyll-docker
+- name: list mandatory
+  debug: msg="{{user_name | mandatory}}"
+- name: set jekyll_dockerfile_dir fact
+  set_fact:
+    dockerfile_dir: "{{jekyll_dockerfile_dir|default('/home/{{user_name}}/dockerfiles/jekyll')}}"
+    colon: ":"
+- name: dockerfile_dir
+  debug: msg="{{dockerfile_dir}}"
+- name: Ensure Dockerfile directory exists
+  file:
+    path: "{{dockerfile_dir}}"
+    state: directory
+
+- name: Create Dockerfile
+  template:
+    src: ../templates/Dockerfile.j2
+    dest: "{{dockerfile_dir}}/Dockerfile"
+
+- name: Build Image
+  docker_image:
+    path: "{{dockerfile_dir}}"
+    name: "jekyll"
+    state: present
+
+- name: ensure bash_aliases exists
+  file:
+    path: "/home/{{user_name}}/.bash_aliases"
+    state: touch
+
+- name: install alias
+  lineinfile:
+    dest: "/home/{{user_name}}/.bash_aliases"
+    line: "alias jekyll='docker run --rm -v \"$PWD{{colon}}/src\" jekyll'"

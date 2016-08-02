@@ -2,3 +2,9 @@
   version: 0.2.2
 - src: mglaman.atom
   version: 1.0.0
+- src: rattermeyer.jekyll-docker
+  version: v0.1
+- src: rattermeyer.virtualbox-guest
+  version: v0.1
+- src: rattermeyer.git
+  version: v0.3

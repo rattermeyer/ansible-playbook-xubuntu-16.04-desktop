@@ -1,0 +1,5 @@
+---
+# defaults file for jekyll-docker
+group_name: "{{user_name}}"
+group_id: 1001
+user_id: 1001

@@ -5,9 +5,16 @@
       apt: name="{{item}}" state=present
       with_items:
         - apt-transport-https
+        - acl
   roles:
     - cmprescott.chrome
     - { role: mglaman.atom, atom_user: richard }
-    - { role: jekyll, tags: jekyll }
+    - { role: jekyll-docker, user_name: richard, user_id: 1001, tags: jekyll, become: true, become_user: richard }
     - { role: virtualbox-guest, virtualbox_x11: True, tags: virtualbox }
     - { role: docker-ubuntu, docker_group_members: richard, tags: docker }
+    - { role: git, user: "{{git_user}}", tags: git}
+  vars:
+    git_user:
+      name: Richard Attermeyer
+      email: richard.attermeyer@gmail.com
+      account: richard
