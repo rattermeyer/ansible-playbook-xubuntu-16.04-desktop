@@ -19,7 +19,7 @@
       user: richard
       vundle_packages: "{{ vundle_packages_essential | union(vundle_packages_ui)}}"
 
-  environment: "{{proxy_env | default(omit)}}"
+  environment: "{{proxy_env | default(dict())}}"
 
   vars_files:
     - customization.yml
