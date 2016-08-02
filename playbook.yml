@@ -6,6 +6,13 @@
       with_items:
         - apt-transport-https
         - acl
+    - name: Ensure directories exist
+      file:
+        name: /opt/maven
+        state: directory
+      tags:
+        - maven
+
   roles:
     - cmprescott.chrome
     - role: williamyeh.oracle-java
@@ -18,6 +25,18 @@
     - role: ansible-role-vim
       user: richard
       vundle_packages: "{{ vundle_packages_essential | union(vundle_packages_ui)}}"
+    - role: tecris.maven
+      maven_major: 3
+      maven_release: 3.3.9
+      maven_home_parent_directory: /opt/maven
+      tags: maven
+    - role: gantsign.intellij
+      intellij_default_jdk_home: '/usr/lib/jvm/jdk1.8.0_92'
+      intellij_default_maven_home: '/opt/maven/apache-maven-3.3.9'
+      intellij_edition: ultimate
+      users:
+        - username: richard
+      tags: intellij
 
   environment: "{{proxy_env | default(dict())}}"
 
