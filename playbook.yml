@@ -8,6 +8,13 @@
         - acl
   roles:
     - cmprescott.chrome
+    - role: angstwad.docker_ubuntu
+      docker_pkg_name: "docker-engine=1.11.2-0~xenial"
+      pip_version_pip: latest
+      pip_version_setuptools: latest
+      pip_version_docker_py: latest
+      pip_version_docker_compose: latest
+      update_docker_package: false
     - role: williamyeh.oracle-java
     - role: ansible-role-git
       git:
@@ -18,8 +25,18 @@
     - role: ansible-role-vim
       user: richard
       vundle_packages: "{{ vundle_packages_essential | union(vundle_packages_ui)}}"
+  tasks:
+    - apt:
+        name: "pidgin"
+        state: present
+  post_tasks:
+    - name: pin docker-engine version
+      template:
+        src: templates/docker-engine-pin.j2
+        dest: /etc/apt/preferences.d/docker-engine
 
   environment: "{{proxy_env | default(omit)}}"
-
+  vars:
+    docker_engine_version: "1.11.2-0"
   vars_files:
     - customization.yml
