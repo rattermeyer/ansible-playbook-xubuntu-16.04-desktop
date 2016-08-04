@@ -31,7 +31,7 @@
         user:
           name: "Richard Attermeyer"
           email: "richard.attermeyer@gmail.com"
-          account: richard
+          account: "{{_user}}"
     - role: ansible-role-vim
       user: richard
       vundle_packages: "{{ vundle_packages_essential | union(vundle_packages_ui)}}"
@@ -48,6 +48,13 @@
         - username: richard
       tags: intellij
   tasks:
+    - name: add maven to path
+      lineinfile:
+        dest: "/home/{{_user}}/.bashrc"
+        line: "export PATH=$PATH:/opt/maven/apache-maven-{{_maven_release}}/bin"
+        regexp: "PATH=.*/opt/maven/apache-maven"
+        state: present
+        insertbefore: "^# Alias definitions"
     - apt:
         name: "pidgin"
         state: present
@@ -64,6 +71,7 @@
     _java_version: 8
     _java_subversion: 102
     _maven_release: "3.3.9"
+    _user: richard
 
   vars_files:
     - customization.yml
