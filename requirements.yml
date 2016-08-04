@@ -12,3 +12,7 @@
   version: 2.9.0
 - src: angstwad.docker_ubuntu
   version: v1.1.8
+- src: gantsign.intellij
+  version: 1.0.4
+- src: tecris.maven
+  version: v1.0.1
