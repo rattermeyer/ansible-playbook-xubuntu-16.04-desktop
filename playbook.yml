@@ -47,6 +47,7 @@
       users:
         - username: richard
       tags: intellij
+    - role: ansible-role-slack
   tasks:
     - name: add maven to path
       lineinfile:
@@ -64,7 +65,7 @@
         src: templates/docker-engine-pin.j2
         dest: /etc/apt/preferences.d/docker-engine
 
-  environment: "{{proxy_env | default(dict())}}"
+  environment: "{{proxy_env | default({})}}"
 
   vars:
     docker_engine_version: "1.11.2-0"

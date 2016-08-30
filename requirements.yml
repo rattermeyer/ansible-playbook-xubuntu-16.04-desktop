@@ -16,3 +16,4 @@
   version: 1.0.4
 - src: tecris.maven
   version: v1.0.1
+- src: https://github.com/rattermeyer/ansible-role-slack
