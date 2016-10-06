@@ -1,0 +1,51 @@
+---
+# defaults file for ansible-role-vim
+packages_add:
+  - vim
+  - build-essential
+  - cmake
+  - python-dev
+package_remove:
+  - vim-tiny
+home: "/home/{{user | mandatory}}"
+
+vundle_packages_essential:
+  - 'tpope/vim-fugitive'
+  - 'tpope/vim-surround'
+  - 'tpope/vim-repeat'
+  - 'tpope/vim-unimpaired'
+  - 'ctrlpvim/ctrlp.vim'
+  - 'godlygeek/tabular'
+  - 'plasticboy/vim-markdown'
+
+vundle_packages_ui:
+  - 'airblade/vim-gitgutter'
+  - 'vim-airline/vim-airline-themes'
+  - 'tomasr/molokai'
+  - 'terryma/vim-multiple-cursors'
+  - 'nathanaelkane/vim-indent-guides'
+
+vundle_packages_gui:
+  - 'suan/vim-instant-markdown'
+  - 'scrooloose/nerdtree'
+  - 'Xuyuanp/nerdtree-git-plugin'
+
+vundle_packages_languages:
+  - 'chase/vim-ansible-yaml'
+  - 'elzr/vim-json'
+  - 'derekwyatt/vim-scala'
+  - 'technomancy/leiningen'
+  - 'pangloss/vim-javascript'
+  - 'klen/python-mode'
+  - 'burnettk/vim-angular'
+  - 'dagwieers/asciidoc-vim'
+  - 'scrooloose/syntastic'
+
+vundle_packages_full:
+  - 'Valloric/YouCompleteMe'
+
+vundle_packages: "{{vundle_packages_essential}}"
+
+package_unimpaired_remap_keys: true
+
+disable_arrow_keys: false

@@ -1,0 +1,4 @@
+---
+# defaults file for ansible-role-slack
+slack_download_link: https://downloads.slack-edge.com/linux_releases/slack-desktop-2.1.2-amd64.deb
+slack_download_path: /tmp

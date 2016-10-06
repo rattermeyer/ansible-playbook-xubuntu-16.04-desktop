@@ -1,0 +1,8 @@
+- name: Download Slack
+  get_url:
+    url: "{{slack_download_link}}"
+    dest: "{{slack_download_path}}"
+
+- name: Install Slack
+  apt:
+    deb: "{{slack_download_path}}/{{slack_download_link | basename }}"

@@ -14,25 +14,25 @@
         - maven
 
   roles:
+    - { role: mglaman.atom, atom_ver: 1.10.2, tags: atom }
     - cmprescott.chrome
-    - role: angstwad.docker_ubuntu
-      docker_pkg_name: "docker-engine=1.11.2-0~xenial"
+    - role: rattermeyer.docker
       pip_version_pip: latest
       pip_version_setuptools: latest
-      pip_version_docker_py: latest
+      pip_version_docker_py: 1.9.0
       pip_version_docker_compose: latest
       update_docker_package: false
-    - role: ansible-oracle-java
+    - role: willamyeah.oracle-java
       java_version: "{{_java_version}}"
       java_subversion: "{{_java_subversion}}"
       java_install_jce: true
-    - role: ansible-role-git
+    - role: rattermeyer.git
       git:
         user:
           name: "Richard Attermeyer"
           email: "richard.attermeyer@gmail.com"
           account: "{{_user}}"
-    - role: ansible-role-vim
+    - role: rattermeyer.vim
       user: richard
       vundle_packages: "{{ vundle_packages_essential | union(vundle_packages_ui)}}"
     - role: tecris.maven
@@ -47,7 +47,8 @@
       users:
         - username: richard
       tags: intellij
-    - role: ansible-role-slack
+    - role: rattermeyer.slack
+    - { role: azavea.vagrant, vagrant_version: 1.8.5, virtualbox_version: 5.1, tags: vagrant }
   tasks:
     - name: add maven to path
       lineinfile:
@@ -57,18 +58,21 @@
         state: present
         insertbefore: "^# Alias definitions"
     - apt:
-        name: "pidgin"
+        name: "{{item}}"
         state: present
+      with_items:
+        - pidgin
+        - zeal
   post_tasks:
     - name: pin docker-engine version
       template:
         src: templates/docker-engine-pin.j2
         dest: /etc/apt/preferences.d/docker-engine
+      when: docker_engine_version is defined
 
   environment: "{{proxy_env | default({})}}"
 
   vars:
-    docker_engine_version: "1.11.2-0"
     _java_version: 8
     _java_subversion: 102
     _maven_release: "3.3.9"

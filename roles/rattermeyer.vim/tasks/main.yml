@@ -1,0 +1,41 @@
+---
+# tasks file for ansible-role-vim
+- name: check mandatory role variables have been defined
+  assert:
+    that: user is defined
+
+- name: Remove any packages, we do not want to have installed
+  apt: name="{{item}}" state=absent
+  with_items: "{{package_remove}}"
+- name: Install required vim packages
+  apt: name={{item}} state=present install_recommends=yes
+  with_items: "{{packages_add}}"
+
+- block:
+    - name: Install Vundle
+      git: repo=https://github.com/gmarik/Vundle.vim.git dest={{home}}/.vim/bundle/Vundle.vim
+    - block:
+        - name: Create vimrc
+          template: src=vimrc.j2 dest={{home}}/.vimrc backup=True
+          register: vimrc_installed
+        - name: Install Powerline Font
+          file: path={{home}}/.fonts state=directory
+        - name: Download PowerlineSymbols
+          get_url: url="https://github.com/powerline/powerline/raw/develop/font/PowerlineSymbols.otf" dest={{home}}/.fonts/PowerlineSymbols.otf
+          register: powerline_symbols_download
+        - name: Execute Font Cache
+          command: fc-cache -vf {{home}}/.fonts
+          when: "{{powerline_symbols_download | changed }}"
+        - name: Create fontconfig conf.d directory
+          file: path={{home}}/.config/fontconfig/conf.d state=directory
+        - name: Download powerline symbols.conf
+          get_url:
+            url: "https://github.com/powerline/powerline/raw/develop/font/10-powerline-symbols.conf"
+            dest: "{{home}}/.config/fontconfig/conf.d/10-powerline-symbols.conf"
+        - name: Install Plugins
+          command: vim +PluginInstall +qall
+          when: "{{vimrc_installed | changed }}"
+      tags:
+        - powerline
+  become: true
+  become_user: "{{user}}"

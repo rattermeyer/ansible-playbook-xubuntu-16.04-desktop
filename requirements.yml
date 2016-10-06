@@ -2,6 +2,8 @@
   version: 0.2.2
 - src: mglaman.atom
   version: 1.0.0
+- src: rattermeyer.vim
+  version: v0.1
 - src: rattermeyer.jekyll-docker
   version: v0.1
 - src: rattermeyer.virtualbox-guest
@@ -9,11 +11,16 @@
 - src: rattermeyer.git
   version: v0.3
 - src: williamyeh.oracle-java
-  version: 2.9.0
+  version: 2.10.0
 - src: angstwad.docker_ubuntu
   version: v1.1.8
 - src: gantsign.intellij
   version: 1.0.4
 - src: tecris.maven
   version: v1.0.1
-- src: https://github.com/rattermeyer/ansible-role-slack
+- src: rattermeyer.slack
+  version: v0.2
+- src: azavea.vagrant
+  version: 0.1.1
+
+
