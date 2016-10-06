@@ -12,6 +12,11 @@
         state: directory
       tags:
         - maven
+    - name: Ensure git user exists
+      user:
+        name: richard
+        ssh_key_bits: 2048
+        generate_ssh_key: True
 
   roles:
     - { role: mglaman.atom, atom_ver: 1.10.2, tags: atom }

@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
     apt-get install software-properties-common
     apt-add-repository ppa:ansible/ansible
     apt-get update
-    apt-get install ansible
+    apt-get install -y ansible
     cd /vagrant/
     ansible-playbook -b -v -i inventory playbook.yml
   SHELL
