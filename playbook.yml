@@ -12,14 +12,17 @@
         state: directory
       tags:
         - maven
-    - name: Ensure git user exists
+    - name: Ensure user exists
       user:
-        name: richard
-        ssh_key_bits: 2048
-        generate_ssh_key: True
-
+        name: "{{user.account | mandatory}}"
+        ssh_key_bits: "{{user.ssh_key_bits | default(2048) }}"
+        generate_ssh_key: "{{user.generate_ssh_key | default(False)}}"
+        password: "{{user.password}}"
+        groups: "adm,sudo"
   roles:
-    - { role: mglaman.atom, atom_ver: 1.10.2, tags: atom }
+    - role: mglaman.atom
+      atom_ver: 1.10.2
+      tags: atom
     - cmprescott.chrome
     - role: rattermeyer.docker
       pip_version_pip: latest
@@ -34,30 +37,39 @@
     - role: rattermeyer.git
       git:
         user:
-          name: "Richard Attermeyer"
-          email: "richard.attermeyer@gmail.com"
-          account: "{{_user}}"
+          name: "{{user.name | mandatory}}"
+          email: "{{user.email | mandatory}}"
+          account: "{{user.account | mandatory}}"
     - role: rattermeyer.vim
       user: richard
       vundle_packages: "{{ vundle_packages_essential | union(vundle_packages_ui)}}"
     - role: tecris.maven
       maven_major: 3
-      maven_release: "{{_maven_release}}"
+      maven_release: "{{f940fb9fa356e28351dd99cf2612c967d173e4413b66c0452ee8fa651b64b698_maven_release}}"
       maven_home_parent_directory: /opt/maven
       tags: maven
     - role: gantsign.intellij
       intellij_default_jdk_home: "/usr/lib/jvm/jdk1.{{_java_version}}.0_{{_java_subversion}}"
       intellij_default_maven_home: "/opt/maven/apache-maven-{{_maven_release}}"
       intellij_edition: ultimate
+      intellij_version: '2016.2.4'
+      intellij_redis_sha256sum: 'f940fb9fa356e28351dd99cf2612c967d173e4413b66c0452ee8fa651b64b698'
       users:
-        - username: richard
+        - username: "{{user.account | mandatory}}"
       tags: intellij
     - role: rattermeyer.slack
-    - { role: azavea.vagrant, vagrant_version: 1.8.5, virtualbox_version: 5.1, tags: vagrant }
+    - role: azavea.vagrant
+      vagrant_version: 1.8.5
+      virtualbox_version: 5.1
+      tags: vagrant
+      when: install_vagrant == True
+    - role: rattermeyer.virtualbox-guest
+      virtualbox_version: 5.1
+      iso_checksum: "sha256:cbcf9b9b1000e09911b3d20e1efe529aef8a945cf130f6abffc14a39522cc1ed"
   tasks:
     - name: add maven to path
       lineinfile:
-        dest: "/home/{{_user}}/.bashrc"
+        dest: "/home/{{user.account}}/.bashrc"
         line: "export PATH=$PATH:/opt/maven/apache-maven-{{_maven_release}}/bin"
         regexp: "PATH=.*/opt/maven/apache-maven"
         state: present
@@ -81,7 +93,6 @@
     _java_version: 8
     _java_subversion: 102
     _maven_release: "3.3.9"
-    _user: richard
 
   vars_files:
     - customization.yml
